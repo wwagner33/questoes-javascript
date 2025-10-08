@@ -1,303 +1,858 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fundamentos de JavaScript</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+    <title>Quiz JavaScript</title>
+    <style>
+        /* Estilos Gerais e Reset Básico */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        main {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Classe de Controle de Visibilidade */
+        .escondido {
+            display: none;
+        }
+
+        /* Estilização da Seção de Introdução */
+        #introducao {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+        }
+
+        #introducao h1 {
+            color: #005a9c;
+            margin-top: 0;
+        }
+
+        #introducao h3 {
+            border-bottom: 2px solid #005a9c;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        #introducao ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #introducao li a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        #introducao li a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        #btn-iniciar {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        #btn-iniciar:hover {
+            background-color: #218838;
+        }
+
+        #btn-iniciar:active {
+            transform: scale(0.99);
+        }
+
+        /* Estilização do Quiz Interativo */
+        #quiz-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            position: relative;
+        }
+
+        #contador-questao {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        #barra-progresso {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        #progresso-atual {
+            height: 100%;
+            background-color: #007bff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .card pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: "Fira Code", "Courier New", monospace;
+            font-size: 0.9em;
+        }
+
+        #opcoes-container {
+            margin: 25px 0;
+        }
+
+        .opcao {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            text-align: left;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .opcao:hover {
+            background-color: #e9ecef;
+        }
+
+        .opcao.selecionada {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+
+        .opcao.correta {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .opcao.incorreta {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        #feedback-container {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #feedback-container.correta {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        #feedback-container.incorreta {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        #resposta-correta {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        #justificativa {
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        #botoes-navegacao {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        #btn-voltar-inicio, #btn-anterior, #btn-proximo, #btn-reiniciar {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        #btn-voltar-inicio {
+            background-color: #6c757d;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        #btn-voltar-inicio:hover {
+            background-color: #5a6268;
+        }
+
+        #btn-anterior {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        #btn-anterior:hover {
+            background-color: #5a6268;
+        }
+
+        #btn-proximo {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #btn-proximo:hover {
+            background-color: #0069d9;
+        }
+
+        #btn-reiniciar {
+            background-color: #28a745;
+            color: white;
+            display: none;
+        }
+
+        #btn-reiniciar:hover {
+            background-color: #218838;
+        }
+
+        #btn-anterior:disabled {
+            background-color: #c6c8ca;
+            cursor: not-allowed;
+        }
+
+        /* Estilos para o resumo */
+        #resumo-container {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+
+        .questao-resumo {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #dee2e6;
+        }
+
+        .questao-resumo.correta {
+            background-color: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .questao-resumo.incorreta {
+            background-color: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .questao-resumo h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .resposta-usuario, .resposta-correta {
+            margin: 5px 0;
+        }
+
+        .justificativa-resumo {
+            margin-top: 10px;
+            font-style: italic;
+            color: #6c757d;
+        }
+
+        .estatisticas {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+
+        .estatistica-item {
+            text-align: center;
+        }
+
+        .estatistica-valor {
+            font-size: 1.5em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .estatistica-label {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
     <main>
-      <section id="introducao">
-        <!--INICIO DO TEXTO INICIAL DO QUIZ-->
-        <h1>Fundamentos do JavaScript</h1>
-        <p>
-          Este quiz aborda conceitos essenciais da linguagem JavaScript, desde sintaxe básica 
-          até comportamentos importantes que todo desenvolvedor precisa dominar.
-        </p>
+        <section id="introducao">
+            <h1>Quiz: Fundamentos de JavaScript</h1>
+            <p>
+                Este quiz foi projetado para testar e aprofundar seu
+                conhecimento sobre as instruções fundamentais e palavras reservadas do
+                JavaScript.
+            </p>
+            <p>
+                Todos os trechos de código fornecidos são autônomos e
+                podem ser executados diretamente no <strong>console de desenvolvedor</strong> do seu
+                navegador, como <strong>Google Chrome</strong> ou <strong>Mozilla Firefox</strong>.
+            </p>
+            <p>
+                O uso do <strong>console</strong> é uma habilidade essencial para qualquer desenvolvedor JavaScript, pois
+                ele fornece um ambiente interativo para testar, depurar e experimentar
+                o código em tempo real.
+            </p>
+            <p>
+                Para abrir o console, você pode usar o atalho
+                de teclado <strong>Ctrl+Shift+J</strong> (no Windows/Linux) ou <strong>Cmd+Option+J</strong> (no Mac) na
+                maioria dos navegadores.
+            </p>
 
-        <div class="assuntos-lista">
-          <h3>Assuntos Abordados neste Quiz:</h3>
-          <div class="topicos-grid">
-            <div class="topico-item">🔤 Declaração de Variáveis (let, const)</div>
-            <div class="topico-item">🎯 Operador typeof e Tipos de Dados</div>
-            <div class="topico-item">⚡ Estruturas de Controle (if/else, switch)</div>
-            <div class="topico-item">🔄 Loops (while, for...of, for...in, do...while)</div>
-            <div class="topico-item">📊 Arrays e Métodos (forEach)</div>
-            <div class="topico-item">🔧 Funções e Escopo</div>
-            <div class="topico-item">🎭 Objetos e Referências</div>
-            <div class="topico-item">🔄 Conversão de Tipos</div>
-          </div>
-        </div>
+            <p>
+                Uma vez aberto, basta copiar o código de uma
+                questão, colá-lo no console e pressionar a tecla <strong>[Enter]</strong> para ver o resultado.
+                Este ambiente funciona como um <strong>REPL (Read-Eval-Print Loop)</strong>, permitindo
+                não apenas verificar as respostas, mas também modificar variáveis e
+                testar variações do código para solidificar sua compreensão. Para
+                consulta de sintaxe e aprofundamento, a <strong><a href="https://developer.mozilla.org/pt-BR/">Mozilla Developer Network
+                (MDN)</a></strong> é a referência recomendada.
+            </p>
 
-        <p>
-          <strong>💡 Dica Prática:</strong> Todos os trechos de código podem ser testados diretamente 
-          no <strong>console do navegador</strong>. Use <strong>Ctrl+Shift+J</strong> (Windows/Linux) 
-          ou <strong>Cmd+Option+J</strong> (Mac) para abrir o console e experimentar com o código.
-        </p>
+            <h3>Referências para Aprofundamento</h3>
+            <ul>
+                <li>
+                    <a
+                        href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Guia de JavaScript da MDN</a
+                    >
+                </li>
+                <li>
+                    <a
+                        href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Referência Completa de JavaScript da MDN</a
+                    >
+                </li>
+            </ul>
 
-        <p>
-          O console funciona como um <strong>REPL (Read-Eval-Print Loop)</strong>, permitindo que você 
-          execute código JavaScript em tempo real, modifique variáveis e teste diferentes cenários 
-          para compreender melhor os conceitos.
-        </p>
+            <button id="btn-iniciar">Iniciar Exercícios</button>
+        </section>
 
-        <div class="referencias-container">
-          <h2>📚 Referências para Aprofundamento</h2>
-
-          <div class="acordeao-item">
-            <div class="acordeao-cabecalho">
-              <h3>Documentação Oficial e Guias Completos</h3>
-              <span class="acordeao-icone">▼</span>
+        <section id="quiz-container" class="escondido">
+            <button id="btn-voltar-inicio">← Voltar ao Início</button>
+            <div id="contador-questao">Questão 1 de 15</div>
+            <div id="barra-progresso">
+                <div id="progresso-atual"></div>
             </div>
-            <div class="acordeao-conteudo">
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide" target="_blank">MDN - Guia JavaScript</a>
-                <div class="descricao">
-                  Guia completo da MDN cobrindo todos os fundamentos da linguagem JavaScript.
+            
+            <div class="card">
+                <h2 id="pergunta"></h2>
+                <pre id="codigo"><code></code></pre>
+                
+                <div id="opcoes-container"></div>
+                
+                <div id="feedback-container">
+                    <div id="resposta-correta"></div>
+                    <div id="justificativa"></div>
                 </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference" target="_blank">MDN - Referência JavaScript</a>
-                <div class="descricao">
-                  Referência detalhada de todos os objetos, funções e operadores do JavaScript.
+                
+                <div id="botoes-navegacao">
+                    <button id="btn-anterior" disabled>Anterior</button>
+                    <button id="btn-proximo">Próxima</button>
+                    <button id="btn-reiniciar">Reiniciar Quiz</button>
                 </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://javascript.info/" target="_blank">The Modern JavaScript Tutorial</a>
-                <div class="descricao">
-                  Tutorial moderno e atualizado que cobre JavaScript desde o básico até tópicos avançados.
-                </div>
-              </div>
             </div>
-          </div>
-
-          <div class="acordeao-item">
-            <div class="acordeao-cabecalho">
-              <h3>Variáveis e Tipos de Dados <span class="dificuldade iniciante">Iniciante</span></h3>
-              <span class="acordeao-icone">▼</span>
+            
+            <div id="resumo-container" class="escondido">
+                <h3>Resumo do seu desempenho</h3>
+                <div id="resumo-questoes"></div>
+                <div class="estatisticas">
+                    <div class="estatistica-item">
+                        <span class="estatistica-valor" id="total-acertos">0</span>
+                        <span class="estatistica-label">Acertos</span>
+                    </div>
+                    <div class="estatistica-item">
+                        <span class="estatistica-valor" id="total-erros">0</span>
+                        <span class="estatistica-label">Erros</span>
+                    </div>
+                    <div class="estatistica-item">
+                        <span class="estatistica-valor" id="percentual-acerto">0%</span>
+                        <span class="estatistica-label">Taxa de Acerto</span>
+                    </div>
+                </div>
             </div>
-            <div class="acordeao-conteudo">
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Grammar_and_types#declarações" target="_blank">MDN - Declarações let e const</a>
-                <div class="descricao">
-                  Explicação detalhada sobre declaração de variáveis com let, const e diferenças entre elas.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Operators/typeof" target="_blank">MDN - Operador typeof</a>
-                <div class="descricao">
-                  Documentação oficial sobre o operador typeof e seus comportamentos específicos.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Data_structures" target="_blank">MDN - Estruturas de Dados</a>
-                <div class="descricao">
-                  Visão geral completa de todos os tipos de dados e estruturas disponíveis em JavaScript.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="acordeao-item">
-            <div class="acordeao-cabecalho">
-              <h3>Estruturas de Controle e Loops <span class="dificuldade iniciante">Iniciante</span></h3>
-              <span class="acordeao-icone">▼</span>
-            </div>
-            <div class="acordeao-conteudo">
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Control_flow_and_error_handling" target="_blank">MDN - Controle de Fluxo</a>
-                <div class="descricao">
-                  Guia completo sobre estruturas de controle como if/else, switch, e tratamento de erros.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Loops_and_iteration" target="_blank">MDN - Loops e Iteração</a>
-                <div class="descricao">
-                  Explicação detalhada de todos os tipos de loops: for, while, do...while, for...of, for...in.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Statements/switch" target="_blank">MDN - Declaração switch</a>
-                <div class="descricao">
-                  Documentação específica sobre a declaração switch e seu uso com casos e default.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="acordeao-item">
-            <div class="acordeao-cabecalho">
-              <h3>Funções e Escopo <span class="dificuldade intermediario">Intermediário</span></h3>
-              <span class="acordeao-icone">▼</span>
-            </div>
-            <div class="acordeao-conteudo">
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Functions" target="_blank">MDN - Guia de Funções</a>
-                <div class="descricao">
-                  Guia completo sobre declaração, parâmetros, escopo e diferentes tipos de funções.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Functions" target="_blank">MDN - Referência de Funções</a>
-                <div class="descricao">
-                  Referência técnica detalhada sobre funções em JavaScript.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Glossary/Scope" target="_blank">MDN - Escopo (Scope)</a>
-                <div class="descricao">
-                  Explicação sobre escopo de variáveis e funções em JavaScript.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="acordeao-item">
-            <div class="acordeao-cabecalho">
-              <h3>Arrays e Objetos <span class="dificuldade intermediario">Intermediário</span></h3>
-              <span class="acordeao-icone">▼</span>
-            </div>
-            <div class="acordeao-conteudo">
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array" target="_blank">MDN - Array</a>
-                <div class="descricao">
-                  Referência completa de todos os métodos e propriedades de arrays.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach" target="_blank">MDN - Array.forEach()</a>
-                <div class="descricao">
-                  Documentação específica sobre o método forEach para iterar sobre arrays.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Guide/Working_with_objects" target="_blank">MDN - Trabalhando com Objetos</a>
-                <div class="descricao">
-                  Guia completo sobre criação, manipulação e iteração de objetos.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="acordeao-item">
-            <div class="acordeao-cabecalho">
-              <h3>Exercícios Práticos e Projetos <span class="dificuldade intermediario">Intermediário</span></h3>
-              <span class="acordeao-icone">▼</span>
-            </div>
-            <div class="acordeao-conteudo">
-              <div class="referencia">
-                <a href="https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/" target="_blank">freeCodeCamp - JavaScript Algorithms</a>
-                <div class="descricao">
-                  Curso gratuito com exercícios práticos para solidificar os conceitos de JavaScript.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://exercism.org/tracks/javascript" target="_blank">Exercism - JavaScript Track</a>
-                <div class="descricao">
-                  Plataforma com exercícios progressivos e mentoria gratuita para praticar JavaScript.
-                </div>
-              </div>
-
-              <div class="referencia">
-                <a href="https://github.com/braziljs/eloquente-javascript" target="_blank">Eloquent JavaScript (PT-BR)</a>
-                <div class="descricao">
-                  Livro gratuito "Eloquent JavaScript" traduzido para português pela BrazilJS.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!--FIM DO TEXTO INICIAL DO QUIZ-->
-
-        <div class="botoes-acao">
-          <button id="btn-iniciar" class="btn btn-success">
-            Iniciar Novo Quiz
-          </button>
-          <button id="btn-continuar" class="btn btn-primary escondido">
-            Continuar de Onde Parei
-          </button>
-        </div>
-      </section>
-
-      <section id="quiz-container" class="escondido">
-        <!-- Restante do código do quiz permanece igual -->
-        <button id="btn-voltar-inicio">← Voltar ao Início</button>
-
-        <div class="quiz-header">
-          <div id="contador-questao"></div>
-          <div id="barra-progresso">
-            <div id="progresso-atual"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2 id="pergunta"></h2>
-          <pre id="codigo" class="escondido"><code></code></pre>
-
-          <div id="opcoes-container"></div>
-
-          <div id="feedback-container">
-            <div id="resposta-correta"></div>
-            <div id="justificativa"></div>
-          </div>
-
-          <div id="botoes-navegacao">
-            <button id="btn-anterior" class="btn-nav" disabled>
-              <span>←</span> Anterior
-            </button>
-            <button id="btn-proximo" class="btn-nav">
-              Próxima <span>→</span>
-            </button>
-          </div>
-        </div>
-
-        <div id="resumo-container" class="escondido">
-          <h3>Resumo do seu desempenho</h3>
-          <div class="estatisticas">
-            <div class="estatistica-item">
-              <span class="estatistica-valor" id="total-acertos">0</span>
-              <span class="estatistica-label">Acertos</span>
-            </div>
-            <div class="estatistica-item">
-              <span class="estatistica-valor" id="total-erros">0</span>
-              <span class="estatistica-label">Erros</span>
-            </div>
-            <div class="estatistica-item">
-              <span class="estatistica-valor" id="percentual-acerto">0%</span>
-              <span class="estatistica-label">Taxa de Acerto</span>
-            </div>
-            <div class="estatistica-item">
-              <span class="estatistica-valor" id="progresso-total">0%</span>
-              <span class="estatistica-label">Progresso Total</span>
-            </div>
-          </div>
-          <div id="resumo-questoes"></div>
-          <div class="botoes-acao">
-            <button id="btn-reiniciar" class="btn btn-success">
-              Reiniciar Quiz
-            </button>
-            <button id="btn-baixar-relatorio" class="btn btn-outline">
-              Baixar Relatório
-            </button>
-          </div>
-        </div>
-      </section>
+        </section>
     </main>
 
-    <script src="questoes.js"></script>
-    <script src="quiz.js"></script>
-    <script src="accordion.js"></script>
-  </body>
+    <script>
+        "use strict";
+
+        (function () {
+            // Seleciona os elementos principais do DOM
+            const introducaoSection = document.getElementById("introducao");
+            const quizContainer = document.getElementById("quiz-container");
+            const btnIniciar = document.getElementById("btn-iniciar");
+            const btnVoltarInicio = document.getElementById("btn-voltar-inicio");
+            const contadorQuestao = document.getElementById("contador-questao");
+            const barraProgresso = document.getElementById("progresso-atual");
+            const perguntaEl = document.getElementById("pergunta");
+            const codigoEl = document.getElementById("codigo");
+            const opcoesContainer = document.getElementById("opcoes-container");
+            const feedbackContainer = document.getElementById("feedback-container");
+            const respostaCorretaEl = document.getElementById("resposta-correta");
+            const justificativaEl = document.getElementById("justificativa");
+            const btnAnterior = document.getElementById("btn-anterior");
+            const btnProximo = document.getElementById("btn-proximo");
+            const btnReiniciar = document.getElementById("btn-reiniciar");
+            const resumoContainer = document.getElementById("resumo-container");
+            const resumoQuestoesEl = document.getElementById("resumo-questoes");
+            const totalAcertosEl = document.getElementById("total-acertos");
+            const totalErrosEl = document.getElementById("total-erros");
+            const percentualAcertoEl = document.getElementById("percentual-acerto");
+
+            // Estado do quiz
+            let questaoAtual = 0;
+            let respostasUsuario = [];
+            let opcoesAtuais = [];
+
+            // Dados dos exercícios
+            const exercicios = [
+                {
+                    pergunta: "Qual será o resultado exibido no console após a execução do código a seguir?",
+                    codigo: "let x = 10;\nconst y = 20;\nx = y;\nconsole.log(x);",
+                    resposta: "20",
+                    justificativa: "A variável `x`, declarada com `let`, pode ter seu valor reatribuído. Ela recebe o valor da constante `y` (20), e esse novo valor é impresso no console.",
+                    opcoes: ["10", "20", "30", "undefined", "null"]
+                },
+                {
+                    pergunta: "Analise o trecho de código abaixo. O que será impresso no console?",
+                    codigo: "console.log(typeof null);",
+                    resposta: '"object"',
+                    justificativa: 'Este é um comportamento conhecido e uma peculiaridade histórica do JavaScript. O `typeof null` retorna "object", embora `null` seja um tipo primitivo. É um bug que foi mantido por razões de compatibilidade.',
+                    opcoes: ['"null"', '"undefined"', '"object"', '"boolean"', '"number"']
+                },
+                {
+                    pergunta: "Qual é a saída do seguinte código?",
+                    codigo: "let a;\nconsole.log(a);",
+                    resposta: "undefined",
+                    justificativa: "Uma variável que foi declarada com `let` (ou `var`), mas à qual nenhum valor foi atribuído, tem o valor `undefined` por padrão em JavaScript.",
+                    opcoes: ["null", "undefined", "0", "NaN", "''"]
+                },
+                {
+                    pergunta: "Qual valor a função `verificarNumero` retornará ao ser chamada com o argumento 5?",
+                    codigo: 'function verificarNumero(num) {\n  if (num > 10) {\n    return "Maior que 10";\n  } else {\n    return "Menor ou igual a 10";\n  }\n}\n// console.log(verificarNumero(5));',
+                    resposta: '"Menor ou igual a 10"',
+                    justificativa: 'A condição `5 > 10` é falsa. Portanto, o fluxo de execução entra no bloco `else` e a função retorna a string "Menor ou igual a 10".',
+                    opcoes: ['"Maior que 10"', '"Menor ou igual a 10"', '"5"', '"undefined"', 'null']
+                },
+                {
+                    pergunta: "Qual o resultado da expressão `Number('10') + 5` no console?",
+                    codigo: null,
+                    resposta: "15",
+                    justificativa: "A função `Number('10')` primeiro converte a string '10' para o número 10. Em seguida, a operação aritmética `10 + 5` é realizada, resultando no número 15.",
+                    opcoes: ["10", "15", "105", "NaN", "undefined"]
+                },
+                {
+                    pergunta: "O que será exibido no console após a execução do laço `while` abaixo?",
+                    codigo: "let i = 0;\nlet resultado = '';\nwhile (i < 3) {\n  resultado += i;\n  i++;\n}\nconsole.log(resultado);",
+                    resposta: '"012"',
+                    justificativa: "O laço executa 3 vezes. A cada iteração, o valor de `i` (0, depois 1, depois 2) é concatenado à string `resultado`. Quando `i` se torna 3, a condição `i < 3` é falsa e o laço termina.",
+                    opcoes: ['"012"', '"123"', '"0123"', '"001"', '"12"']
+                },
+                {
+                    pergunta: "Qual é a saída do código que utiliza um laço `for...of`?",
+                    codigo: "const cores = ['vermelho', 'verde', 'azul'];\nfor (const cor of cores) {\n  console.log(cor);\n}",
+                    resposta: "'vermelho', 'verde', 'azul' (em linhas separadas)",
+                    justificativa: "O laço `for...of` é projetado para iterar diretamente sobre os valores de um objeto iterável, como um array. A cada iteração, a variável `cor` recebe um dos elementos do array, que é então impresso.",
+                    opcoes: [
+                        "'vermelho', 'verde', 'azul' (em linhas separadas)",
+                        "'vermelho, verde, azul'",
+                        "'azul', 'verde', 'vermelho' (em linhas separadas)",
+                        "'vermelho'",
+                        "'azul'"
+                    ]
+                },
+                {
+                    pergunta: "Considere o objeto `carro` e o laço `for...in`. O que será impresso no console?",
+                    codigo: "const carro = { marca: 'Ford', modelo: 'Mustang', ano: 1969 };\nlet texto = '';\nfor (let x in carro) {\n  texto += carro[x] + ' ';\n}\nconsole.log(texto);",
+                    resposta: "'Ford Mustang 1969 '",
+                    justificativa: "O laço `for...in` itera sobre as chaves (propriedades) de um objeto ('marca', 'modelo', 'ano'). A expressão `carro[x]` acessa o valor de cada propriedade, que é então concatenado à variável `texto`.",
+                    opcoes: [
+                        "'Ford Mustang 1969 '",
+                        "'Ford Mustang 1969'",
+                        "'Mustang Ford 1969'",
+                        "'1969 Ford Mustang'",
+                        "'Ford 1969 Mustang'"
+                    ]
+                },
+                {
+                    pergunta: "Qual será o valor final da variável `soma` após a execução do método `forEach`?",
+                    codigo: "const numeros = [10, 20, 30];\nlet soma = 0;\nnumeros.forEach(function(valor) {\n  soma += valor;\n});\nconsole.log(soma);",
+                    resposta: "60",
+                    justificativa: "O método `forEach` executa a função de callback para cada elemento do array. A variável `soma` é acumulada a cada chamada: 0 + 10 = 10, depois 10 + 20 = 30, e finalmente 30 + 30 = 60.",
+                    opcoes: ["60", "50", "70", "30", "90"]
+                },
+                {
+                    pergunta: "O que a instrução `switch` exibirá no console? (Assuma que o código foi executado em uma terça-feira, onde `new Date().getDay()` retorna 2)",
+                    codigo: 'let dia = 2; // Simulação para terça-feira\nlet texto;\nswitch (dia) {\n  case 6:\n    texto = "Hoje é Sábado";\n    break;\n  case 0:\n    texto = "Hoje é Domingo";\n    break;\n  default:\n    texto = "Ansioso pelo fim de semana!";\n}\nconsole.log(texto);',
+                    resposta: '"Ansioso pelo fim de semana!"',
+                    justificativa: "A instrução `switch` compara o valor de `dia` (2) com cada `case`. Como não há um `case 2`, o bloco `default` é executado, atribuindo a string correspondente à variável `texto`.",
+                    opcoes: [
+                        '"Ansioso pelo fim de semana!"',
+                        '"Hoje é Sábado"',
+                        '"Hoje é Domingo"',
+                        '"Hoje é Segunda"',
+                        '"Hoje é Terça"'
+                    ]
+                },
+                {
+                    pergunta: "Qual é a saída do seguinte laço `do...while`?",
+                    codigo: 'let i = 5;\nlet texto = "";\ndo {\n  texto += i;\n  i++;\n} while (i < 5);\nconsole.log(texto);',
+                    resposta: '"5"',
+                    justificativa: "A principal característica do laço `do...while` é que o bloco de código é executado *pelo menos uma vez*, antes da condição ser verificada. O `5` é concatenado, `i` se torna 6, e a condição `6 < 5` se torna falsa, terminando o laço.",
+                    opcoes: ['"5"', '"6"', '"0"', '""', '"undefined"']
+                },
+                {
+                    pergunta: "O que o `console.log` exibirá após a execução deste código?",
+                    codigo: "function calcular() {\n  let x = 10;\n  return;\n  const y = 20; \n}\nconsole.log(calcular());",
+                    resposta: "undefined",
+                    justificativa: "Quando a instrução `return` é usada sem um valor, a função termina sua execução imediatamente e retorna `undefined`. O código após a linha do `return` nunca é alcançado.",
+                    opcoes: ["undefined", "null", "10", "20", "0"]
+                },
+                {
+                    pergunta: "Analise o trecho de código. Qual será o valor de `resultado`?",
+                    codigo: "const obj = { a: 1 };\nconst arr = [1];\n\nconst resultado = (typeof obj === typeof arr);\nconsole.log(resultado);",
+                    resposta: "true",
+                    justificativa: 'Em JavaScript, o operador `typeof` aplicado a um array retorna a string "object". Como o `typeof` de um objeto literal também é "object", a comparação `"object" === "object"` resulta em `true`.',
+                    opcoes: ["true", "false", "undefined", "null", "0"]
+                },
+                {
+                    pergunta: "Qual será a saída no console do código abaixo?",
+                    codigo: "console.log(1 / 0);",
+                    resposta: "Infinity",
+                    justificativa: "JavaScript segue o padrão de ponto flutuante IEEE 754. Neste padrão, a divisão de um número (exceto zero) por zero não gera um erro, mas resulta no valor especial `Infinity`.",
+                    opcoes: ["Infinity", "0", "1", "NaN", "undefined"]
+                },
+                {
+                    pergunta: "O que será impresso no console por este trecho de código?",
+                    codigo: "const pessoa = new Object();\npessoa.nome = 'Ana';\n\nconst novaPessoa = pessoa;\nnovaPessoa.nome = 'Bia';\n\nconsole.log(pessoa.nome);",
+                    resposta: "'Bia'",
+                    justificativa: "Objetos em JavaScript são tipos de referência. A linha `const novaPessoa = pessoa` não cria uma cópia; ambas as variáveis passam a apontar para o *mesmo* objeto na memória. Modificar o objeto através de uma variável reflete na outra.",
+                    opcoes: ["'Bia'", "'Ana'", "'Bia e Ana'", "'undefined'", "'null'"]
+                }
+            ];
+
+            // Função para embarcaralhar um array (uso do algoritmo de Fisher-Yates)
+            function embaralharArray(array) {
+                const novoArray = [...array];
+                for (let i = novoArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [novoArray[i], novoArray[j]] = [novoArray[j], novoArray[i]];
+                }
+                return novoArray;
+            }
+
+            // Função para habilitar/desabilitar todas as opções
+            function habilitarOpcoes(habilitar = true) {
+                const botoesOpcao = opcoesContainer.querySelectorAll(".opcao");
+                botoesOpcao.forEach((botao) => {
+                    botao.disabled = !habilitar;
+                });
+            }
+            // Função para atualizar a barra de progresso
+            function atualizarProgresso() {
+                const progresso = ((questaoAtual + 1) / exercicios.length) * 100;
+                barraProgresso.style.width = `${progresso}%`;
+            }
+
+            // Função para mostrar uma questão
+            function mostrarQuestao(indice) {
+                questaoAtual = indice;
+                const exercicio = exercicios[indice];
+                
+                // Esconder resumo se estiver visível
+                resumoContainer.classList.add('escondido');
+                
+                // Atualizar contador
+                contadorQuestao.textContent = `Questão ${indice + 1} de ${exercicios.length}`;
+                
+                // Atualizar progresso
+                atualizarProgresso();
+                
+                // Mostrar pergunta
+                perguntaEl.textContent = exercicio.pergunta;
+                
+                // Mostrar código ou esconder se não houver
+                if (exercicio.codigo) {
+                    codigoEl.querySelector('code').textContent = exercicio.codigo;
+                    codigoEl.style.display = 'block';
+                } else {
+                    codigoEl.style.display = 'none';
+                }
+                
+                // Embaralhar e mostrar opções
+                opcoesAtuais = embaralharArray(exercicio.opcoes);
+                opcoesContainer.innerHTML = '';
+                
+                opcoesAtuais.forEach((opcao, i) => {
+                    const botaoOpcao = document.createElement('button');
+                    botaoOpcao.className = 'opcao';
+                    botaoOpcao.textContent = opcao;
+                    botaoOpcao.dataset.index = i;
+                    
+                    botaoOpcao.addEventListener('click', () => selecionarOpcao(botaoOpcao, opcao));
+                    
+                    opcoesContainer.appendChild(botaoOpcao);
+                });
+                
+                // Esconder feedback
+                feedbackContainer.style.display = 'none';
+                
+                // Habilitar opções e desabilitar "Próxima"
+                habilitarOpcoes(true);
+                btnProximo.disabled = true;
+                // Atualizar estado dos botões de navegação
+                btnAnterior.disabled = indice === 0;
+                
+                if (indice === exercicios.length - 1) {
+                    btnProximo.textContent = 'Finalizar';
+                } else {
+                    btnProximo.textContent = 'Próxima';
+                }
+                
+                // Mostrar resposta anterior do usuário, se houver
+                if (respostasUsuario[indice] !== undefined) {
+                    const respostaSalva = respostasUsuario[indice].resposta;
+                    const correta = respostaSalva === exercicio.resposta;
+
+                    const botoesOpcao = opcoesContainer.querySelectorAll('.opcao');
+                    botoesOpcao.forEach(botao => {
+                        if (botao.textContent === respostaSalva) {
+                            botao.classList.add('selecionada');
+                            botao.classList.add(correta ? 'correta' : 'incorreta');
+                        }
+                        if (botao.textContent === exercicio.resposta) {
+                            botao.classList.add('correta');
+                        }
+                    });
+                    mostrarFeedback(correta);
+                    habilitarOpcoes(false);
+                    btnProximo.disabled = false;
+                }
+            }
+
+            // Função para lidar com a seleção de uma opção
+            function selecionarOpcao(botaoOpcao, opcaoSelecionada) {
+                // Remover seleção anterior
+                const opcoes = opcoesContainer.querySelectorAll('.opcao');
+
+                // Selecionar nova opção
+                botaoOpcao.classList.add('selecionada');
+                
+                // Salvar resposta do usuário
+                respostasUsuario[questaoAtual] = {
+                    resposta: opcaoSelecionada,
+                    verificada: false
+                };
+                
+                // Verificar se a resposta está correta
+                const exercicio = exercicios[questaoAtual];
+                const correta = opcaoSelecionada === exercicio.resposta;
+                
+                // Marcar opções
+                opcoes.forEach(op => {
+                    if (op.textContent === exercicio.resposta) {
+                        op.classList.add('correta');
+                    } else if (op.textContent === opcaoSelecionada && !correta) {
+                        op.classList.add('incorreta');
+                    }
+                });
+                
+                // Mostrar feedback
+                mostrarFeedback(correta);
+                habilitarOpcoes(false);
+                btnProximo.disabled = false;
+            }
+
+            // Função para mostrar feedback
+            function mostrarFeedback(correta) {
+                const exercicio = exercicios[questaoAtual];
+                
+                if (correta) {
+                    feedbackContainer.className = 'correta';
+                    respostaCorretaEl.textContent = 'Resposta correta!';
+                } else {
+                    feedbackContainer.className = 'incorreta';
+                    respostaCorretaEl.textContent = `Resposta correta: ${exercicio.resposta}`;
+                }
+                
+                justificativaEl.textContent = exercicio.justificativa;
+                feedbackContainer.style.display = 'block';
+            }
+
+            // Função para ir para a próxima questão
+            function proximaQuestao() {
+                if (questaoAtual < exercicios.length - 1) {
+                    mostrarQuestao(questaoAtual + 1);
+                } else {
+                    // Finalizar quiz
+                    finalizarQuiz();
+                }
+            }
+
+            // Função para ir para a questão anterior
+            function questaoAnterior() {
+                if (questaoAtual > 0) {
+                    mostrarQuestao(questaoAtual - 1);
+                }
+            }
+
+            // Função para finalizar o quiz
+            function finalizarQuiz() {
+                // Calcular pontuação
+                const acertos = respostasUsuario.filter(resposta => 
+                    resposta && resposta.verificada && 
+                    resposta.resposta === exercicios[respostasUsuario.indexOf(resposta)].resposta
+                ).length;
+                
+                const erros = exercicios.length - acertos;
+                const pontuacao = Math.round((acertos / exercicios.length) * 100);
+                
+                // Mostrar resultado final
+                perguntaEl.textContent = `Quiz Finalizado!`;
+                codigoEl.style.display = 'none';
+                opcoesContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h3>Sua pontuação: ${pontuacao}%</h3>
+                        <p>Você acertou ${acertos} de ${exercicios.length} questões.</p>
+                    </div>
+                `;
+                feedbackContainer.style.display = 'none';
+                
+                // Atualizar botões
+                btnAnterior.style.display = 'none';
+                btnProximo.style.display = 'none';
+                btnReiniciar.style.display = 'block';
+                
+                // Mostrar resumo
+                mostrarResumo();
+            }
+
+            // Função para mostrar o resumo
+            function mostrarResumo() {
+                resumoContainer.classList.remove('escondido');
+                resumoQuestoesEl.innerHTML = '';
+                
+                let acertos = 0;
+                let erros = 0;
+                
+                exercicios.forEach((exercicio, index) => {
+                    const respostaUsuario = respostasUsuario[index];
+                    const correta = respostaUsuario && respostaUsuario.resposta === exercicio.resposta;
+                    
+                    if (correta) acertos++;
+                    else erros++;
+                    
+                    const questaoResumo = document.createElement('div');
+                    questaoResumo.className = `questao-resumo ${correta ? 'correta' : 'incorreta'}`;
+                    
+                    questaoResumo.innerHTML = `
+                        <h4>Questão ${index + 1}</h4>
+                        <p><strong>Pergunta:</strong> ${exercicio.pergunta}</p>
+                        <p class="resposta-usuario"><strong>Sua resposta:</strong> ${respostaUsuario ? respostaUsuario.resposta : 'Não respondida'}</p>
+                        <p class="resposta-correta"><strong>Resposta correta:</strong> ${exercicio.resposta}</p>
+                        <p class="justificativa-resumo"><strong>Justificativa:</strong> ${exercicio.justificativa}</p>
+                    `;
+                    
+                    resumoQuestoesEl.appendChild(questaoResumo);
+                });
+                
+                // Atualizar estatísticas
+                totalAcertosEl.textContent = acertos;
+                totalErrosEl.textContent = erros;
+                percentualAcertoEl.textContent = `${Math.round((acertos / exercicios.length) * 100)}%`;
+            }
+
+            // Função para reiniciar o quiz
+            function reiniciarQuiz() {
+                questaoAtual = 0;
+                respostasUsuario = [];
+                mostrarQuestao(0);
+                
+                // Restaurar botões
+                btnAnterior.style.display = 'block';
+                btnProximo.style.display = 'block';
+                btnReiniciar.style.display = 'none';
+                
+                // Esconder resumo
+                resumoContainer.classList.add('escondido');
+            }
+
+            // Função para voltar à tela inicial
+            function voltarInicio() {
+                if (confirm('Tem certeza que deseja voltar ao início? Seu progresso atual será perdido.')) {
+                    quizContainer.classList.add('escondido');
+                    introducaoSection.classList.remove('escondido');
+                    reiniciarQuiz();
+                }
+            }
+
+            // Adicionar event listeners
+            btnIniciar.addEventListener('click', () => {
+                introducaoSection.classList.add('escondido');
+                quizContainer.classList.remove('escondido');
+                mostrarQuestao(0);
+            });
+
+            btnVoltarInicio.addEventListener('click', voltarInicio);
+            btnProximo.addEventListener('click', proximaQuestao);
+            btnAnterior.addEventListener('click', questaoAnterior);
+            btnReiniciar.addEventListener('click', reiniciarQuiz);
+        })();
+    </script>
+</body>
 </html>
