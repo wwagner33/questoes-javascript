@@ -106,7 +106,6 @@
             dados.questoesVisitadas = new Set();
           }
 
-          // CORREÇÃO: Garantir que respostasUsuario seja um array válido
           if (
             !Array.isArray(dados.respostasUsuario) ||
             dados.respostasUsuario.length !== exercicios.length
@@ -156,28 +155,29 @@
       }
     },
 
-    exportarDados() {
-      const progresso = this.carregarProgresso();
-      const dados = {
-        progresso,
-        dataExportacao: new Date().toISOString(),
-      };
+exportarDados() {
 
-      const blob = new Blob([JSON.stringify(dados, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
+  const progresso = Persistencia.carregarProgresso();
+  const dados = {
+    progresso,
+    dataExportacao: new Date().toISOString(),
+  };
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `quiz-progresso-${
-        new Date().toISOString().split("T")[0]
-      }.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    },
+  const blob = new Blob([JSON.stringify(dados, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `quiz-progresso-${
+    new Date().toISOString().split("T")[0]
+  }.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+},
   };
 
   // ===== GERENCIAMENTO DE QUESTÕES =====
